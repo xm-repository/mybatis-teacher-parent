@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmployeeMapper">
+
+    <!-- if这个语句,只要test值返回true,就原样输出if里面的内容
+
+    test属性里面输入的内容是ognl表达式.
+    -->
+    <!--<select id="getEmpsBySalaryAndGender" resultType="com.entity.Employee">
+
+        select id,username,salary,gender from employee
+
+
+where
+           <if test="gender != null ">
+             and gender = #{gender}
+           </if>
+          <if test="s != null">
+              and salary > #{s}
+        </if>
+    </select>
+
+-->
+
+    <!--
+
+        where元素,会自动帮我们添加where
+        如果有and 或者or开头,会自动帮我们删掉
+    -->
+    <!--<select id="getEmpsBySalaryAndGender" resultType="com.entity.Employee">
+
+        select id,username,salary,gender from employee
+
+        <where>
+            <if test="gender != null ">
+                and gender = #{gender}
+            </if>
+            <if test="s != null">
+                and salary > #{s}
+            </if>
+        </where>
+    </select>-->
+
+    <!--
+
+    trim:只是用来裁剪字符用的,它有4个属性
+    1. prefix : 自动添加前缀
+    2.prefixOverrides :把前缀后面跟着内容覆盖掉
+    3.suffix :自动添加后缀
+    4.suffixOverrides : 把后缀之前的那个内容覆盖掉.
+    -->
+    <!--    <select id="getEmpsBySalaryAndGender" resultType="com.entity.Employee">
+
+            select id,username,salary,gender from employee
+
+            <trim prefix="where" prefixOverrides="and | or">
+                <if test="gender != null ">
+                    and gender = #{gender}
+                </if>
+                <if test="s != null">
+                    and salary > #{s}
+                </if>
+            </trim>
+        </select>-->
+
+
+    <select id="getEmpsBySalaryAndGender" resultType="com.entity.Employee">
+
+        select id,username,salary,gender from employee
+
+        <choose>
+            <when test="gender != null ">
+                where gender = #{gender}
+            </when>
+            <when test="s != null">
+                where salary > #{s}
+            </when>
+            <otherwise>
+                where 1 = 1
+            </otherwise>
+        </choose>
+    </select>
+    <!--
+
+        foreach 元素的collection属性的值安装官方文档的说法是
+        所有的可以迭代的变量都行(iterable)
+
+        测试之后发现可以输入的值是:
+        1. list
+        2.dao方法的参数名(要有确定的参数名,有@param或者arg1,arg2)
+
+    如果dao方法的参数类型是list
+    那么foreach的collection属性的值可以是
+    1. list
+    2. 参数名
+
+    如果dao方法的参数类型是map
+    那么foreach的collection属性的值可以是
+    1. 参数名
+    2. 参数名.keys()或者参数名.values()
+    3.不能填入list,map或者collection
+        item与index
+    如果collection是一个list
+    item就是list里面的数据
+    index就是索引值,比如0,1,2
+
+    如果collection是一个map
+    item就是map集合里面的值,也就是values里面的数据
+    index就是map的键值.
+    -->
+    <select id="getEmpsByDepts" resultType="com.entity.Employee">
+
+        select id,username,salary,gender from employee
+
+        where deptid in
+        <foreach collection="p" item="xxx" separator="," open="(" close=")">
+            #{xxx}
+        </foreach>
+
+    </select>
+
+    <select id="getEmpsByDeptsMap" resultType="com.entity.Employee">
+        select id,username,salary,gender from employee
+        where deptid in
+        <foreach collection="p" item="xxx" index="i" separator="," open="(" close=")">
+            #{xxx}
+        </foreach>
+
+    </select>
+<!--
+
+    1.set只写一个
+    2.set会自动帮我们剔除掉最后的逗号
+    3.set不会帮我们处理null的情况
+    4.set不会帮我们在中间加逗号
+-->
+    <update id="update" >
+
+
+        update employee
+        <set>
+           <if test="username != null">
+            username = #{username},
+            </if>
+            <if test="salary != null">
+            salary = #{salary},
+            </if>
+        </set>
+
+
+        where id = 1;
+
+    </update>
+
+    <!--
+    下面的网址有关于ognl的基本入门介绍:
+    https://www.ibm.com/developerworks/cn/opensource/os-cn-ognl/index.html
+
+
+    作业:完成批量删除和增加,利用foreach
+
+    -->
+
+</mapper>

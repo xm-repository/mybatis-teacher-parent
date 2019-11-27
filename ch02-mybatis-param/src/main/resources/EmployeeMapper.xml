@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmpDao">
+
+
+    <!--参数用#,大括号里面值,在insert这个案例中,就是
+    Employee实体类的属性的名字.
+    #是利用jdbc的参数化查询方式,没有注入式漏洞的问题
+
+    -->
+    <insert id="insert"  >
+       insert into employee(salary,  gender, username, deptid)
+       values(#{salary},#{gender},#{username},#{deptId})
+    </insert>
+
+
+    <!--在这个案例中,把#改为$,查看日志输出,理解#与$的不同
+    如果方法只有一个参数,下面的参数名称不需要跟方法的参数名一样
+    可以任意填写
+
+    -->
+    <select id="getById" resultType="emp" >
+        select id,username,salary,gender
+from employee where id = #{asdf}
+
+    </select>
+
+    <!--
+       在非调试编译java类的过程中,默认方法的参数
+       名字是消失的,这个消失主要是针对反射的api
+
+       导致的后果是通过反射取参数名的时候,得到参数名
+       不是你声明的参数名,而是arg0,arg1,arg2...的形式
+
+       为了解决这个问题,mybatis提供了一套方案,
+       除了保留arg0,arg1,这一套jdk自带的方案
+       它自己实现了一套param1,param2 的方案
+       param1固定代表着第一个参数
+
+    -->
+    <select id="getBySalaryAndGender" resultType="emp" >
+        select id,username,salary,gender
+        from employee where
+                        gender = #{param2}
+                        and
+                            salary > #{param1}
+
+
+    </select>
+
+<!--
+    sql语句与mapper接口的参数顺序是不相关的.
+
+    sql语句中参数的值,是取自mapper接口方法的哪一个数据??
+
+    在sql中指定参数名,依据这个名字,去反射找到mapper接口对应名字的值
+
+    sql语句中指定的参数有3种形式
+    1.arg0,arg1...
+    2. param1,param2
+    3.在mapper接口中通过Param注解来指定名字,与sql语句的参数名一样
+
+-->
+    <select id="getBySalaryAndGender2" resultType="emp" >
+        select id,username,salary,gender
+        from employee where
+            gender = #{g}
+                        and
+            salary > #{s}
+
+
+    </select>
+
+
+    <select id="getAllByCondition" resultType="emp" >
+        select id,username,salary,gender
+        from employee where
+            gender = #{gg}
+                        and
+            salary > #{ss}
+order by ${sortField}  ${sortType}
+
+    </select>
+
+</mapper>

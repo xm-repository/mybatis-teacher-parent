@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+<!--
+        课程的大纲
+        1.properties
+        2.resultMap
+            2.1 自动映射（settings的设置：别名，自动映射行为等）
+            2.2 手动映射，id，result
+            2.3 构造函数映射处理
+            2.4 映射配置的继承
+
+在TypeAliasRegistry中可以看到自带的类型别名注册信息
+-->
+    <properties resource="db.properties" >
+   <!--   <property name="url" value=""/>-->
+    </properties>
+    
+    <settings>
+        <!--下面几个配置选项的值,都填的是默认值-->
+        <!--这个参数表明是否支持sql的别名,默认支持-->
+        <setting name="useColumnLabel" value="true"/>
+        <!--这个参数表明是否支持把下划线改成标准的驼峰属性形式-->
+        <setting name="mapUnderscoreToCamelCase" value="false"/>
+        <!--
+        自动映射行为,不管是resultType还是resultMap都是生效的
+        这个配置选项有3个值,NONE,PARTIAL,FULL,默认是PARTIAL
+        Partial表示只处理自己的映射配置,不包含子元素中(比如association与collection)
+        配置的映射信息
+        -->
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+    </settings>
+    <environments default="dev">
+        <environment id="dev">
+
+            <transactionManager type="JDBC"/>
+
+            <!-- 一般固定是POOLED,池化的.确定是使用连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="EmployeeMapper.xml"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmployeeMapper">
+
+    <select id="getEmpsByCustom" resultType="com.entity.Employee">
+
+        select id,username,salary from employee order by id
+limit #{offset},#{pageSize}
+    </select>
+
+
+    <select id="getEmpsCount" resultType="int">
+
+        select count(*) from employee
+    </select>
+
+
+    <select id="getEmpsByRowBounds" resultType="com.entity.Employee">
+
+        select id,username,salary from employee order by id
+    </select>
+
+
+    <select id="getEmpsByPageHelper" resultType="com.entity.Employee">
+
+        select id,username,salary from employee order by id
+    </select>
+</mapper>

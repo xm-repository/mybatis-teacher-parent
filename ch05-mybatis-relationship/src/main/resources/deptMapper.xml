@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DeptDao">
+    <!--
+    第一种情况:
+        利用嵌套的collection + resultmap属性配置方式
+
+    -->
+
+     <resultMap id="deptWithEmployeeResultMap" type="com.entity.Dept">
+         <id column="id" property="id"></id>
+         <result column="deptname" property="deptname"/>
+
+         <collection property="employeeList" resultMap="employeeResultMap"></collection>
+
+     </resultMap>
+
+     <resultMap id="employeeResultMap" type="com.entity.Employee">
+         <id column="eid" property="id"></id>
+         <result column="username" property="username"/>
+
+     </resultMap>
+     <select id="getDeptById" resultMap="deptWithEmployeeResultMap">
+
+         select d.id,
+                d.deptname,
+                e.id as eid,
+                e.username
+         from dept d
+                  left join employee e on d.id = e.deptid
+         where d.id = #{id}
+     </select>
+
+
+
+
+
+
+    <!--第二种情况:利用collection + select与column属性完成-->
+    <!--<resultMap id="deptWithEmployeeResultMap2" type="com.entity.Dept">
+        <id column="id" property="id"></id>
+        <result column="deptname" property="deptname"/>
+
+        <collection property="employeeList" select="getEmpsByDeptId" column="id"></collection>
+
+    </resultMap>
+
+
+    <resultMap id="basicEmpResultMap" type="com.entity.Employee">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="deptid" property="deptId"/>
+
+    </resultMap>
+    <select id="getEmpsByDeptId" resultMap="basicEmpResultMap">
+        select id, username,deptid
+        from employee
+        where deptid = #{id}
+    </select>
+    <select id="getDeptById" resultMap="deptWithEmployeeResultMap2">
+        select d.id,
+               d.deptname
+        from dept d
+        where d.id = #{id}
+    </select>-->
+
+
+
+</mapper>

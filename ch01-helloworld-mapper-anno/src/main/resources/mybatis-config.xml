@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+    <environments default="dev">
+        <environment id="dev">
+
+            <transactionManager type="JDBC"/>
+
+            <!-- 一般固定是POOLED,池化的.确定是使用连接池-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/demo"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!--<mapper class="com.dao.DeptDao" ></mapper>-->
+        <!--下面就是扫描此包下面的所有类,并注册到mybatis,不能有重复-->
+        <package name="com.dao"/>
+    </mappers>
+</configuration>

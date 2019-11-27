@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ch05-mybatis-relationship" />
+        <module name="ch02-mybatis-param" />
+        <module name="mybatis-common" />
+        <module name="mini-mybatis" />
+        <module name="ch04-mybatis-key" />
+        <module name="ch08-mybatis-page" />
+        <module name="ch10-mybatis-plugin" />
+        <module name="ch01-helloworld-api" />
+        <module name="ch03-mybatis-resultmap-simple" />
+        <module name="ch11-mybatis-plugin-impl" />
+        <module name="ch06-mybatis-dynamic-sql" />
+        <module name="ch09-mybatis-misc-sql-bind" />
+        <module name="ch01-helloworld-mapper-anno" />
+        <module name="ch07-mybatis-batch" />
+        <module name="ch01-helloworld-mapper" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="mini-mybatis" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

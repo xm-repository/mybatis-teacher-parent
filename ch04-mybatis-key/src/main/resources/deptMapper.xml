@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DeptDao">
+    <!--
+    插入记录时的一个通常的案例是:插入的同时获取自动生成的值
+    并把获取的值赋值给实体类的某一个属性
+
+    设置方法就是:
+    1. useGeneratedKeys = true
+    2. keyProperty = 实体类的某一个属性的名字
+    -->
+
+  <!--  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into dept(deptname) values(#{deptname})
+    </insert>-->
+
+
+    <!--
+        剩下的东西与自增长的主键无关,但其知识类似于这个获取主键
+
+
+
+        下面的案例仍然是得到自增长的id,但其实selectKey
+        除了处理这个自增长的id以外,还可以处理任何其他的东西
+
+    -->
+
+
+    <insert id="insert"  >
+
+        <selectKey resultType="integer" order="AFTER" keyProperty="id">
+            select last_insert_id()
+        </selectKey>
+        insert into dept(deptname) values(#{deptname})
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmployeeMapper">
+    <!--
+        关联(association)查询: 关联查询出一的一方
+        主要是针对查询数据时,顺带查询其关联的一的一方,意思是:
+        1. 查询多的一方的时候,顺带查询出一的一方,比如查询员工的时候,顺带查询所属的部门
+        就是多对一的情况
+        2.一对一的情况,比如查询员工的时候,顺带查询出身份信息
+
+        在mybatis中,总的做法就是利用association这个select元素的子元素来实现
+    -->
+    <!--**********第一种情况:
+    没有用到association,主要用的是ognl这个对象图导航语言的技术.
+    这种写法的特点:
+    1. sql语句是一次性把两个表的数据都查询出来
+    2. sql语句只有一个,只执行一次sql语句
+    3.利用resultMap来进行映射处理
+    4. 实体类关联的属性,利用导航的配置,比如property="dept.id"
+        4.1 dept这个是Employee实体类中的属性的名字
+        4.2 dept.id这个id是dept属性对应的另外一个实体类的属性名
+        类似于el表达式的写法
+    -->
+    <!--   <resultMap id="getEmpByIdWithDeptResultMap" type="com.entity.Employee">
+           <id column="eid" property="id"></id>
+           <result column="username" property="username"></result>
+           <result column="deptid" property="deptId"/>
+
+           <result column="id" property="dept.id"/>
+           <result column="deptname" property="dept.deptname"/>
+       </resultMap>
+
+       <select id="getEmpById" resultMap="getEmpByIdWithDeptResultMap">
+       select e.id as eid ,
+       e.username,e.deptid,
+              d.id ,
+              d.deptname
+       from employee e
+           left join dept d
+       on e.deptid = d.id
+       where e.id = #{id}
+       </select>
+   -->
+    <!--*********第二种情况:
+    利用association来处理关联查询
+    做法是这样的.
+    1.写一个sql语句,此语句是把两个表的数据都查询出来
+    2.关联实体的映射是靠association + resultmap属性
+        2.1 resultmap属性的值是另外一个独立的resultMap的配置
+    3.association的property属性的值是Employee实体的属性名
+    相对于第一种的好处是association的resultMap属性值对应的resultMap设置可以重用
+    -->
+
+    <!--    <resultMap id="getEmpByIdWithDeptResultMap2" type="com.entity.Employee">
+            <id column="eid" property="id"></id>
+            <result column="username" property="username"></result>
+            <result column="deptid" property="deptId"/>
+
+            <association property="dept" resultMap="basicDeptResultMap"></association>
+        </resultMap>
+
+        <resultMap id="basicDeptResultMap" type="com.entity.Dept">
+            <id column="id" property="id"></id>
+            <result column="deptname" property="deptname"></result>
+        </resultMap>
+
+
+        <select id="getEmpById" resultMap="getEmpByIdWithDeptResultMap2">
+            select e.id as eid ,e.username,e.deptid,
+                   d.id ,d.deptname
+            from employee e
+                     left join dept d
+                               on e.deptid = d.id
+            where e.id = #{id}
+        </select>-->
+
+    <!--第三种情况:
+     特点如下:
+     1.sql语句还是两个表的记录都查询出来
+     2. association没有resultMap属性值的设置
+     3. 直接在association内部配置关联实体(Dept类)的映射配置
+
+     跟第二种比较,不能重用关联实体的映射配置
+     -->
+    <resultMap id="getEmpByIdWithDeptResultMap2" type="com.entity.Employee">
+        <id column="eid" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="deptid" property="deptId"/>
+
+        <association property="dept">
+            <id column="id" property="id"></id>
+            <result column="deptname" property="deptname"></result>
+        </association>
+    </resultMap>
+
+
+    <select id="getEmpById" resultMap="getEmpByIdWithDeptResultMap2">
+        select e.id as eid,
+               e.username,
+               e.deptid,
+               d.id,
+               d.deptname
+        from employee e
+                 left join dept d
+                           on e.deptid = d.id
+        where e.id = #{id}
+    </select>
+
+    <!--第四种情况:
+    特点:
+    1.有两个sql语句
+        1.1 第一个sql语句是查询子表的记录
+        1.2 第二个sql语句是查询父表(也就是一的一方的信息)
+    2.association必须设置select属性为查询一的一方的select元素的id值
+    3.association的column属性的值设定为子表的外键列
+    4. 一的一方的映射配置是靠另外一个select元素中设定的resultType或者resultMap来完成映射的
+        4.1 一的一方的结果类型跟子的属性的类型应该是兼容(一般是一样的,在案例中就都是Dept类)
+
+    -->
+    <!--<resultMap id="getEmpByIdWithDeptResultMap3" type="com.entity.Employee">
+        <id column="eid" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="deptid" property="deptId"/>
+
+        <association property="dept" select="getDeptById" column="deptid">
+        </association>
+    </resultMap>
+
+    <resultMap id="basicDeptResultMap" type="com.entity.Dept">
+        <id column="id" property="id"></id>
+        <result column="deptname" property="deptname"></result>
+    </resultMap>
+
+    <select id="getEmpById" resultMap="getEmpByIdWithDeptResultMap3" >
+        select e.id as eid ,e.username,e.deptid
+              from employee  e where e.id = #{id}
+    </select>
+
+    <select id="getDeptById" resultMap="basicDeptResultMap">
+       select id,deptname from dept where id = #{id}
+    </select>-->
+
+
+
+    <!--  演示n+1查询,这种情况尽量避免出现
+
+    1.可以用内嵌resultmap解决
+    2.内部用缓存(cache)解决一部分.
+    -->
+
+
+    <resultMap id="NPlusOneEmpResultMap"
+               type="com.entity.Employee">
+        <id column="eid" property="id"></id>
+        <result column="username" property="username"/>
+        <result column="deptid" property="deptId"/>
+        <association property="dept" select="NPlusOneDeptResultMap" column="deptid"/>
+    </resultMap>
+
+
+    <select id="NPlusOneDeptResultMap"
+            resultType="com.entity.Dept">
+            select id,deptname from dept where id = #{id}
+    </select>
+    <select id="getEmps" resultMap="NPlusOneEmpResultMap">
+
+        select id as eid,
+               username ,
+               deptid from employee e
+
+    </select>
+</mapper>

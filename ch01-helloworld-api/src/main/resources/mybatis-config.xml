@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--可以配置多个环境,一般实际项目中配置一个开发环境和生产环境
+        environments的default属性表明使用哪一个环境
+    -->
+    <environments default="dev">
+        <environment id="dev">
+            <!--设定事务管理器,有两种设定值,一个是JDBC,
+            一个是Managed(容器事务)-->
+            <transactionManager type="JDBC"/>
+
+            <!-- 一般固定是POOLED,池化的.确定是使用连接池
+            有三个值,一个POOLED.UNPOOLED,JNDI
+
+            -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/demo"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+<!--模拟生产环境,主要是改变数据库服务器的地址,假定为10.10.10.10-->
+        <environment id="prodict">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://10.10.10.10:3306/demo"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="basicMapper.xml"/>
+
+    </mappers>
+</configuration>

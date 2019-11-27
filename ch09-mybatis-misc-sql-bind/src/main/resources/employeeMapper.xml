@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmployeeDao">
+
+    <sql id="xxx">
+
+        select ${tableName}.id,
+               ${tableName}.username,
+               ${tableName}.salary
+    </sql>
+    <select id="getEmpById" resultType="com.entity.Employee">
+
+        <include refid="xxx">
+            <property name="tableName" value="employee"/>
+        </include>
+        from employee
+        where id = #{id}
+        order by id
+    </select>
+<!--最最简单的模糊查询写法就是:空格+ % (%是用单引号引起来的)-->
+   <!-- <select id="getEmpsByUsername" resultType="com.entity.Employee">
+        <include refid="xxx">
+            <property name="tableName" value="employee"/>
+        </include>
+        from employee
+        where username like '%' #{username} '%'
+        order by id
+    </select>-->
+
+    <!--_parameter 是mybatis中的一个隐含变量,
+    此变量指的是方法的参数-->
+    <select id="getEmpsByUsername" resultType="com.entity.Employee">
+        <bind name="yyy" value="'%' + _parameter + '%'"/>
+        <!--<bind name="yyy" value="'%' + username + '%'"/>-->
+        select id,
+        username,
+        salary
+        from employee
+        where username like #{yyy}
+        order by id
+    </select>
+
+
+    <select id="getEmpsByUsername2" resultType="com.entity.Employee">
+        <bind name="yyy" value="'%' + username.length + '%'"/>
+
+        select id,
+        username,
+        salary
+        from employee
+        where username like #{yyy}
+        order by id
+    </select>
+
+<!--隐含对象_parameter是一个包含当前dao方法的所有参数信息的
+一个对象,取得第一个参数值可以用_parameter.param1,
+第二个参数值是_parameter.param2以此类推-->
+    <select id="getEmpsByUsername3" resultType="com.entity.Employee">
+        <bind name="yyy" value="'%' + _parameter.param1 + '%'"/>
+        <bind name="zzz" value="'username'"/>
+
+        select id,
+        username,
+        salary
+        from employee
+        where ${zzz} like #{yyy}
+        order by id
+    </select>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.EmpDao">
+
+    <!--
+        自动映射功能,原理是实体类中的属性名与字段名一样就自动映射
+        自动映射功能是默认开启的,你可以通过settings进行调整
+    -->
+    <resultMap id="employeeResultMap" type="com.entity.Employee">
+
+        <!--如果是主键字段就用id元素来配置,其它的就用result元素来配置
+        其它没有配置的项,靠自动映射完成映射处理
+        -->
+        <id property="id" column="id"></id>
+        <result property="username" column="user_name" />
+
+    </resultMap>
+
+<!--用来演示构造函数映射的案例-->
+    <resultMap id="employeeResultMap2" type="com.entity.Employee">
+        <!--constructor元素中有两个子元素,idArg和arg,其作用类似于id,result
+        原理:通过你配置的arg或idArg的个数,判断构造函数参数的个数
+        然后每一个配置项对的javaType确定参数的类型
+        -->
+        <constructor>
+            <arg column="salary" javaType="decimal"></arg>
+            <arg column="user_name" javaType="string"></arg>
+        </constructor>
+        <id property="id" column="id"></id>
+        <result property="username" column="user_name" />
+    </resultMap>
+
+
+    <resultMap id="parent" type="com.entity.Employee">
+        <id column="id" property="id"></id>
+    </resultMap>
+
+
+    <resultMap id="child" type="com.entity.Employee" extends="parent">
+        <!--<id column="id" property="id"></id>-->
+
+        <result property="username" column="user_name" />
+    </resultMap>
+    <!--
+    利用resultType这种形式,要求数据库的字段
+    与实体类的属性名是一样的.
+
+    如果不一样,只能通过改变sql语句的别名来达成
+    select id as myid
+
+    -->
+<!--    <select id="getAll" resultType="com.entity.Employee">
+        select id,username,salary,gender,deptid
+from employee
+    </select>-->
+
+
+    <!--resultMap与ResultType不同同时使用-->
+    <select id="getAll" resultMap="child">
+        select id,username as user_name,salary,gender,deptid
+        from employee
+    </select>
+</mapper>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DeptDao">
+
+
+    <!--
+
+    进行批量操作的时候,有可能产生错误,原因是因为有些数据库
+    默认允许传递的数据量是有限制的,mysql默认是1M,
+    如果是这种情况,需要在mysql的配置文件(my.ini)中的
+    mysqld这个组里面添加max_allowed_packet=10M
+
+
+    -->
+    <insert id="insertSimple">
+        insert into dept(deptname) values
+        <foreach collection="list" item="dept" separator=",">
+            (#{dept.deptname})
+
+        </foreach>
+
+    </insert>
+
+
+    <insert id="deleteSimple">
+        delete from dept where
+        <foreach collection="list" item="key" separator="or">
+            id = #{key}
+        </foreach>
+    </insert>
+
+    <!--批量更新的第一种写法
+    利用分号分隔多个sql语句来实现,
+    需要在jdbc的连接url中添加allowMultiQueries=true这个选项即可
+
+    但是这种操作,mysql与sqlserver是支持,oracle数据"好像"是不支持的
+    -->
+    <!-- <update id="updateSimple">
+         <foreach collection="list" item="dept" separator=";">
+             update dept set deptname = #{dept.deptname}
+             where id = #{dept.id}
+         </foreach>
+     </update>-->
+
+
+    <!--
+
+        这种批量更新方式不需要设置jdbc的url的allowMultiQueries =true
+        因为它只有一条update语句
+
+        推荐方式
+    -->
+    <update id="updateSimple">
+        update dept set
+
+        <trim prefix="deptname= case" suffix="end">
+            <foreach collection="list" item="dept">
+                when id=#{dept.id} then #{dept.deptname}
+            </foreach>
+        </trim>
+        <where>
+            <foreach collection="list" item="dept" separator="or">
+                id = #{dept.id}
+            </foreach>
+        </where>
+    </update>
+
+
+    <!--
+
+    上面的批量操作的方式性能比较高,但不是纯粹意义上jdbc的批量处理
+    jdbc的批量处理是利用PrepareStatement的
+    addBatch()
+    executeBatch()
+    这两个方法来完成的
+    -->
+
+
+    <!--这就是一个普通的更新一条记录的写法,不是批量更新-->
+    <update id="update">
+
+        update dept set deptname = #{deptname}
+where id = #{id}
+    </update>
+    <!--
+    作业1: 批量更新(update)员工表
+    -->
+
+    <!--作业:完成批量删除和增加,利用foreach
+    特别注意：mysql默认接受sql的大小是1048576(1M)，用foreach方式若数据量超过1M会报如下异常：
+    （可通过调整MySQL安装目录下的my.ini文件中[mysqld]段的＂max_allowed_packet = 1M＂）
+    https://cloud.tencent.com/developer/article/1349729
+
+
+    https://juejin.im/post/5a6fdcce6fb9a01cb9132e11 这个文章讲了foreach来update的方式,
+    但这个不是真正的批量更新操作方式,但里面有关于传递多个sql语句给mysql数据库时url的参数
+    allowMultiQueries = true的设置
+
+    https://cloud.tencent.com/developer/article/1349729 三种批量删除方式,并比较了性能
+
+        https://developpaper.com/mybatis-batch-updates-in-three-ways/ 利用case when的方式批量更新(update)
+    -->
+
+
+    <!--
+    总结:
+    1. batch的方式sql语句简单,但java代码写起来麻烦一些
+    而且性能较低
+    2. 拼接一个完整sql语句的优势是性能高,缺点是
+    拼接sql语句时复杂一些,而且还会某种程度上依赖数据库的sql语法
+
+    3. allowMultiQueries这个连接字符串的参数
+    是让mysql数据库支持用分号分隔的多个sql语句的执行
+
+    4. max_allowed_packet 这个mysql数据库服务器参数
+    的调整是为了允许网络通信传递的数据量的大小.
+
+
+    -->
+
+</mapper>

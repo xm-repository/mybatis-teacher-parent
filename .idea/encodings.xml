@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch01-helloworld-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch01-helloworld-mapper" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch01-helloworld-mapper-anno" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch02-mybatis-param" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch03-mybatis-resultmap-simple" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch04-mybatis-key" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch05-mybatis-relationship" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch06-mybatis-dynamic-sql" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch07-mybatis-batch" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch08-mybatis-page" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch09-mybatis-misc-sql-bind" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch10-mybatis-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ch11-mybatis-plugin-impl" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mini-mybatis" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/mybatis-common" charset="UTF-8" />
+  </component>
+</project>

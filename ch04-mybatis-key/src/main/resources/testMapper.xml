@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.TestDao">
+
+
+    <!--
+        剩下的东西与自增长的主键无关,但其知识类似于这个获取主键
+    -->
+
+
+    <!--这种方式是直接利用数据库的uuid函数,但是没有利用实体类的值-->
+    <!--<insert id="insert">
+
+    insert into test(id, testname) values(uuid(),#{testname})
+    </insert>-->
+
+
+    <!--
+
+        这个案例的目标是往test表里面插入一条记录
+        但是其id值是需要先从数据库查询出来赋值给Test实体类的id属性,
+        Test实体类的testname属性是自己指定
+
+
+        做法是:
+        1. 先利用selectKey 查询数据库,sql语句是select uuid(),得到数据库生成的uuid值
+        并赋值给Test实体类的id字段,
+
+
+            a)resulttype:必须设置,表明selectKey元素里面的sql语句执行的结果类型
+            b)order:它有2个值,一个是before一个是after,因为现在的案例,是先要从
+            数据库获取值赋值给test实体类,所以是before,另外一个含义就是before表明
+            selectKey是在insert语句之前运行
+            c)keyProperty :设置实体类的一个字段
+
+            这3点的总目标就是利用selectKey的查询语句的结果(resultType)赋值给实体类
+            的属性(keyProperty)
+        2.有了id字段的值,有了testname的值,这样就可以插入到数据库了.
+
+        3.selectKey必须设置resultType,order,keyProperty三个属性的值.
+
+    此时此刻的mybatis版本的默认行为是这样的:
+        只取第一行("不"可以有多行记录)的第一列的值
+
+    -->
+    <!--<insert id="insert">
+        <selectKey resultType="string" order="BEFORE" keyProperty="id" >
+            select  uuid() as xxx
+        </selectKey>
+        insert into test(id,testname) values(#{id},#{testname})
+    </insert>-->
+
+
+    <!--
+    keyColumn官方文档:
+    官方文档:https://mybatis.org/mybatis-3/sqlmap-xml.html
+    关于keyColumn属性的作用可以查看mybatis源代码中的
+    SelectKeyGenerator类的processGeneratedKeys方法(主要在内部调用的handleMultiplleProperties)
+
+keyColumn作用:
+    1. 在keyProperty属性设置超过1的情况下起作用
+    2. 目的是把selectKey中的sql语句的结果赋值给keyProperty的各个属性,赋值方法是keyColumn与keyProperty顺序对应赋值
+    也就是把keyColumn第一列的值赋值给keyProperty设置的第一个属性,以此类推.
+
+    注意:这样设计的考虑是:因为insert里面只能有一个selectKey,那如何给insert传递的实体类的多个属性赋值呢?
+    就是利用keyProperty与keyColumn结合来达成
+    -->
+
+    <insert id="insert">
+
+        <selectKey resultType="com.entity.Category"
+                   order="BEFORE"
+                   keyProperty="id,yyy"
+                   keyColumn="cid,cname">
+            select cname as cname,cid as cid from category limit 1;
+        </selectKey>
+
+        insert into test(id,testname) values(#{id},#{yyy})
+    </insert>
+</mapper>
