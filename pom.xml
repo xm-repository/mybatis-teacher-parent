@@ -35,7 +35,7 @@
 
         <mybatis.version>3.5.2</mybatis.version>
         <mysql.version>5.1.47</mysql.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <pagehelper.version>5.1.10</pagehelper.version>
         <jstl.version>1.2</jstl.version>
         <servlet.version>3.1.0</servlet.version>
